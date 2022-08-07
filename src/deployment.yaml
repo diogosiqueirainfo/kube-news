@@ -48,7 +48,7 @@ kind: Deployment
 metadata:
   name: kubenews
 spec:  
-  replicas: 6
+  replicas: 4
   selector:
     matchLabels:
       app: kubenews
@@ -70,17 +70,17 @@ spec:
         env:
             - name: DB_DATABASE
               value: "kubenews"
-            - name: DB_USER
+            - name: DB_USERNAME
               value: "kubenews"
             - name: DB_PASSWORD
-              value:  "Kube#123"
+              value: "Kube#123"
             - name: DB_HOST
               value: "postgre"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kubenews
+  name: kube-news
 spec:
   selector:
     app: kubenews
