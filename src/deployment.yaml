@@ -13,17 +13,24 @@ spec:
         app: postgre
     spec:
       containers:
-        - name: postgre
-          image: postgres:14.3
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_PASSWORD
-              value: "Kube#123"
-            - name: POSTGRES_USER
-              value: "kubenews"
-            - name: POSTGRES_BD
-              value: "kubenews"
+      - name: postgre
+        image: postgres:14.3
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"         
+        ports:
+                - containerPort: 5432
+        env:
+              - name: POSTGRES_PASSWORD
+                value: "Kube#123"
+              - name: POSTGRES_USER
+                value: "kubenews"
+              - name: POSTGRES_BD
+                value: "kubenews"
 ---
 apiVersion: v1
 kind: Service
@@ -40,8 +47,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubenews
-spec:
-  replicas: 2
+spec:  
+  replicas: 6
   selector:
     matchLabels:
       app: kubenews
@@ -52,21 +59,28 @@ spec:
     spec:
       containers:
       - name: kubenews
-        image: diogosiqueira/kube-news:V1
+        image: diogosiqueira/kube-news:V2
+        resources:
+          requests:
+              memory: "64Mi"
+              cpu: "250m"
+          limits:
+              memory: "128Mi"
+              cpu: "500m"         
         env:
-        - name: DB_DATABASE
-          value: "kubenews"
-        - name: DB_USER
-          value: "kubenews"
-        - name: DB_PASSWORD
-          value:  "Kube#123"
-        - name: DB_HOST
-          value: "postgre"
+            - name: DB_DATABASE
+              value: "kubenews"
+            - name: DB_USER
+              value: "kubenews"
+            - name: DB_PASSWORD
+              value:  "Kube#123"
+            - name: DB_HOST
+              value: "postgre"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kube-news
+  name: kubenews
 spec:
   selector:
     app: kubenews
@@ -74,5 +88,5 @@ spec:
   - port: 80
     targetPort: 8080
     nodePort: 30000
-  type: NodePort
+  type: LoadBalancer
 ---
